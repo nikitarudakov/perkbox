@@ -2,7 +2,9 @@ package repo
 
 import (
 	"fmt"
+	"github.com/caarlos0/env/v10"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"github.com/nikitarudakov/perkbox/internal/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -15,6 +17,18 @@ type Config struct {
 	User string `env:"POSTGRES_USER"`
 	Pass string `env:"POSTGRES_PASS"`
 	DB   string `env:"USER_DB"`
+}
+
+func LoadConfig() (*Config, error) {
+	// Load .env file (optional, for dev only)
+	_ = godotenv.Load(".env")
+
+	var cfg Config
+	if err := env.Parse(&cfg); err != nil {
+		return nil, err
+	}
+
+	return &cfg, nil
 }
 
 type Repository struct {
@@ -43,21 +57,25 @@ func (r *Repository) UpdateUser(user *domain.User) error {
 	return r.db.Model(&domain.User{}).Updates(user).Error
 }
 
-func (r *Repository) DeleteUser(user *domain.User) error {
-	return r.db.Model(&domain.User{}).Delete(user).Error
+func (r *Repository) DeleteUser(id uuid.UUID) error {
+	return r.db.Delete(&domain.User{}, "id = ?", id).Error
 }
 
-func (r *Repository) ListAllUsers() ([]domain.User, error) {
-	var users []domain.User
-	if err := r.db.Model(&domain.User{}).Find(&users).Error; err != nil {
+func (r *Repository) GetUserByID(id uuid.UUID) (*domain.User, error) {
+	var user domain.User
+	if err := r.db.Model(&domain.User{}).
+		Where("id = ? AND role = 'user'", id).
+		Find(&user).Error; err != nil {
 		return nil, err
 	}
-	return users, nil
+	return &user, nil
 }
 
 func (r *Repository) ListUsersForBusiness(businessID uuid.UUID) ([]domain.User, error) {
 	var users []domain.User
-	if err := r.db.Model(&domain.User{}).Find(&users, "business_id = ?", businessID).Error; err != nil {
+	if err := r.db.Model(&domain.User{}).
+		Where("business_id = ? and role = 'user'", businessID).
+		Find(&users).Error; err != nil {
 		return nil, err
 	}
 	return users, nil
