@@ -64,8 +64,8 @@ func (r *Repository) DeleteUser(id uuid.UUID) error {
 func (r *Repository) GetUserByID(id uuid.UUID) (*domain.User, error) {
 	var user domain.User
 	if err := r.db.Model(&domain.User{}).
-		Where("id = ? AND role = 'user'", id).
-		Find(&user).Error; err != nil {
+		Where("id = ?", id).
+		First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

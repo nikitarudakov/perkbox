@@ -124,6 +124,11 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
+	if user.Role == "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "access to admin details is restricted"})
+		return
+	}
+
 	c.JSON(http.StatusOK, user)
 }
 
