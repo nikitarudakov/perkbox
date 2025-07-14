@@ -15,7 +15,7 @@ type Config struct {
 	Host string `env:"POSTGRES_HOST"`
 	Port string `env:"POSTGRES_PORT"`
 	User string `env:"POSTGRES_USER"`
-	Pass string `env:"POSTGRES_PASS"`
+	Pass string `env:"POSTGRES_PASSWORD"`
 	DB   string `env:"USER_DB"`
 }
 
@@ -36,7 +36,7 @@ type Repository struct {
 }
 
 func NewRepository(cfg *Config) (*Repository, error) {
-	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s",
+	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable",
 		cfg.User, cfg.Pass, cfg.Host, cfg.Port, cfg.DB)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
