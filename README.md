@@ -24,8 +24,8 @@ This header-based approach simplifies testing and avoids implementing a full aut
 ### 1. Clone & run
 
 ```bash
-git clone https://github.com/nikitarudakov/perkbox-user-service.git
-cd perkbox-user-service
+git clone https://github.com/nikitarudakov/perkbox.git
+cd perkbox
 docker-compose up --build
 ```
 
