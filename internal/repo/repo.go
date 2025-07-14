@@ -54,7 +54,7 @@ func (r *Repository) CreateUser(user *domain.User) error {
 }
 
 func (r *Repository) UpdateUser(user *domain.User) error {
-	return r.db.Model(&domain.User{}).Updates(user).Error
+	return r.db.Model(&domain.User{}).Where("id = ?", user.ID).Updates(user).Error
 }
 
 func (r *Repository) DeleteUser(id uuid.UUID) error {

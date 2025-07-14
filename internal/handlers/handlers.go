@@ -105,6 +105,7 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	if err := h.r.UpdateUser(&user); err != nil {
 		log.Println("error listing all users: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "something went wrong"})
+		return
 	}
 
 	c.JSON(http.StatusOK, user)
