@@ -13,3 +13,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  user-api:
+    container_name: user-api
+    build:
+      context: .
+      dockerfile: ./cmd/api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    links:
+      - postgres
+    ports:
+      - "8080:8080"
+    env_file: .env
+    command: [ "./user-service" ]
